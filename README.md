@@ -2,4 +2,4 @@
 >
 >     unzip /home/VicksCurrencyCollection/mysite/app.zip
 >
->[![image](https://github.com/imvickykumar999/Currency-Collection/assets/50515418/183b3476-a2be-46e6-a38d-d56f8570cfbb)](https://vickscurrencycollection.pythonanywhere.com/)
+>[![image](https://github.com/imvickykumar999/Currency-Collection/assets/50515418/2e5b398e-a366-4bff-b8b9-be23a1929aae)](https://vickscurrencycollection.pythonanywhere.com/)
