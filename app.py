@@ -9,35 +9,25 @@ import sqlite3 as sql
 from werkzeug.utils import secure_filename
 import os, random, secrets
 
+try: os.mkdir('static')
+except: pass
+
+try: os.mkdir('static/files')
+except: pass
+
 app=Flask(__name__)
 secret_key = secrets.token_hex(16)
 app.config['SECRET_KEY'] = secret_key
+
 
 UPLOAD_FOLDER ="static/files"
 FILE_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 def allowed_extensions(file_name):
     return '.' in file_name and file_name.rsplit('.',1)[1].lower() in FILE_EXTENSIONS
-           
-@app.route("/fileUpload",methods=['GET','POST'])
-def fileUpload():
-    if request.method=='POST':
-        if 'file' not in request.files:
-            flash('No file part','danger')
-            
-        file = request.files['file']
-        if file.filename == '':
-            flash('No file selected','danger')
-            
-        if file and allowed_extensions(file.filename):
-            filename, file_extension = os.path.splitext(file.filename)
-            new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
-            file.save(os.path.join(UPLOAD_FOLDER, new_filename))   
-            
-            flash(file.filename+' Uploaded Successfully','success')
-        return redirect(url_for("index"))
-    return render_template('fileUpload.html')
+
 
 @app.route("/")
 @app.route("/index")
@@ -51,6 +41,7 @@ def index():
     data=cur.fetchall()
     return render_template("index.html",datas=data)
 
+
 @app.route("/add_user",methods=['POST','GET'])
 def add_user():
 
@@ -58,15 +49,28 @@ def add_user():
         uname=request.form['uname']
         contact=request.form['contact']
 
+        if 'file' not in request.files:
+            flash('No file part','danger')
+            
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected','danger')
+            
+        if file and allowed_extensions(file.filename):
+            filename, file_extension = os.path.splitext(file.filename)
+            new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
+            file.save(os.path.join(UPLOAD_FOLDER, new_filename))   
+
         con=sql.connect("db_web.db")
         cur=con.cursor()
 
-        cur.execute("insert into users(UNAME,CONTACT) values (?,?)",(uname,contact))
+        cur.execute("insert into users(UNAME,CONTACT,FILE) values (?,?,?)",(uname,contact,new_filename))
         con.commit()
 
         flash('Currency Added','success')
         return redirect(url_for("index"))
     return render_template("add_user.html")
+
 
 @app.route("/edit_user/<string:uid>",methods=['POST','GET'])
 def edit_user(uid):
@@ -75,10 +79,23 @@ def edit_user(uid):
         uname=request.form['uname']
         contact=request.form['contact']
 
+        if 'file' not in request.files:
+            flash('No file part','danger')
+            
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected','danger')
+            
+        if file and allowed_extensions(file.filename):
+            filename, file_extension = os.path.splitext(file.filename)
+            new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
+            file.save(os.path.join(UPLOAD_FOLDER, new_filename))   
+
         con=sql.connect("db_web.db")
         cur=con.cursor()
 
-        cur.execute("update users set UNAME=?,CONTACT=? where UID=?",(uname,contact,uid))
+        print(new_filename)
+        cur.execute("update users set UNAME=?,CONTACT=?,FILE=? where UID=?",(uname,contact,new_filename,uid))
         con.commit()
 
         flash('Currency Updated','success')
