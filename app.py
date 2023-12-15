@@ -59,7 +59,7 @@ def add_user():
         if file and allowed_extensions(file.filename):
             filename, file_extension = os.path.splitext(file.filename)
             new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
-            file.save(os.path.join(UPLOAD_FOLDER, new_filename))   
+            file.save(os.path.join(app.root_path, UPLOAD_FOLDER, new_filename))   
 
         con=sql.connect("db_web.db")
         cur=con.cursor()
@@ -89,7 +89,7 @@ def edit_user(uid):
         if file and allowed_extensions(file.filename):
             filename, file_extension = os.path.splitext(file.filename)
             new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
-            file.save(os.path.join(UPLOAD_FOLDER, new_filename))   
+            file.save(os.path.join(app.root_path, UPLOAD_FOLDER, new_filename))   
 
         con=sql.connect("db_web.db")
         cur=con.cursor()
