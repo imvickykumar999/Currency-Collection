@@ -1,0 +1,30 @@
+
+<html>
+  <head>
+    <title>File Upload in Flask</title>
+    <style>
+      .success{
+        color:green;
+      }
+      .danger{
+        color:red;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Flash Message -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <h3 class='{{category}}'>{{ message }}</h3>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <h3>File Upload</h3>
+    <form method='post' action='/fileUpload' enctype='multipart/form-data'>
+      <p><input type='file'  name='file'></p>
+      <p><input type='submit' value='Submit'></p>
+    </form>
+  </body>
+</html>
