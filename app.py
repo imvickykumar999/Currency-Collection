@@ -94,7 +94,6 @@ def edit_user(uid):
         con=sql.connect("db_web.db")
         cur=con.cursor()
 
-        print(new_filename)
         cur.execute("update users set UNAME=?,CONTACT=?,FILE=? where UID=?",(uname,contact,new_filename,uid))
         con.commit()
 
@@ -115,6 +114,11 @@ def delete_user(uid):
     con=sql.connect("db_web.db")
 
     cur=con.cursor()
+    data = cur.execute("select FILE from users where UID=?",(uid,)).fetchall()
+    
+    data = f'./static/files/{data[0][0]}'
+    os.remove(data)
+
     cur.execute("delete from users where UID=?",(uid,))
     con.commit()
 
