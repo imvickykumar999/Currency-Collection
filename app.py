@@ -21,7 +21,7 @@ app.config['SECRET_KEY'] = secret_key
 
 
 UPLOAD_FOLDER ="static/files"
-FILE_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+FILE_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
