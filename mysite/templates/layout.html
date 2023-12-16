@@ -1,7 +1,7 @@
 
 <html>
   <head>
-    <title>Currency Collection</title>
+    <title>HTML Collection</title>
     <link rel="icon" type="image/png" href="https://en.numista.com/catalogue/photos/inde/3030-original.jpg">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -114,29 +114,55 @@
         }
       }
     </script>
+
   </head>
-
   <body>
-    <div class='container pt-3'>
-      {% with messages=get_flashed_messages(with_categories=true) %}
-        {% if messages %}
 
-          {% for category,message in messages %}
-            <div class='alert alert-{{category}}'>{{message}}</div>
-          {% endfor %}
+    <nav class="navbar navbar-expand-md bg-light navbar-light">
+      <div class='container'>
+        <!-- Brand -->
+        <a class="navbar-brand" href="/">Home</a>
 
-        {% endif %}
-      {% endwith %}
+        <!-- Toggler/collapsibe Button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <a class='btn btn-warning' href="/">
-          <h4>
-              Home
-          </h4>
-      </a>
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav ml-auto">
+            {% if session.username %}
+              <li class="nav-item">
+                <a class="nav-link" href="/index">{{session.username}}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+              </li>
+                <li class="nav-item">
+              <a class="nav-link" href="/reg">Registration</a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-      {% block body %}
-      {% endblock %}
-
+    <div class='container mt-4'>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    {% block body %}
+    {% endblock %}
     </div>
+
   </body>
 </html>

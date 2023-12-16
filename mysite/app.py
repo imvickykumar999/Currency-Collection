@@ -1,18 +1,20 @@
 
 from flask import (Flask,
     render_template,
-    request,redirect,
-    url_for,flash
+    request, redirect,
+    url_for, flash,
+    session,
 )
 
-import sqlite3 as sql
 from werkzeug.utils import secure_filename
+from functools import wraps
 import os, random, secrets
+import sqlite3 as sql
 
-try: os.mkdir('mysite/static')
+try: os.mkdir('static')
 except: pass
 
-try: os.mkdir('mysite/static/files')
+try: os.mkdir('static/files')
 except: pass
 
 app=Flask(__name__)
@@ -21,12 +23,70 @@ app.config['SECRET_KEY'] = secret_key
 
 
 UPLOAD_FOLDER ="static/files"
-FILE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi'}
+FILE_EXTENSIONS = {'html', 'htm'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def allowed_extensions(file_name):
     return '.' in file_name and file_name.rsplit('.',1)[1].lower() in FILE_EXTENSIONS
+
+@app.route('/login',methods=['POST','GET'])
+def login():
+    status=True
+    con=sql.connect("mysite/db_sample.db")
+
+    if request.method=='POST':
+        email=request.form["email"]
+        pwd=request.form["upass"]
+        cur=con.cursor()
+        cur.execute("select UNAME from users where EMAIL=? and UPASS=?",(email,pwd))
+        data=cur.fetchone()
+
+        print(data)
+        if data:
+            session['logged_in']=True
+            session['username']=data[0]
+            flash('Login Successfully','success')
+            return redirect('index')
+        else:
+            flash('Invalid Login. Try Again','danger')
+    return render_template("login.html")
+  
+
+def is_logged_in(f):
+	@wraps(f)
+	def wrap(*args,**kwargs):
+		if 'logged_in' in session:
+			return f(*args,**kwargs)
+		else:
+			flash('Unauthorized, Please Login','danger')
+			return redirect(url_for('login'))
+	return wrap
+  
+
+@app.route('/reg',methods=['POST','GET'])
+def reg():
+    status=False
+    con=sql.connect("mysite/db_sample.db")
+
+    if request.method=='POST':
+        name=request.form["uname"]
+        email=request.form["email"]
+        pwd=request.form["upass"]
+        cur=con.cursor()
+        cur.execute("insert into users(UNAME,UPASS,EMAIL) values(?,?,?)",(name,pwd,email))
+        con.commit()
+        cur.close()
+        flash('Registration Successfully. Login Here...','success')
+        return redirect('login')
+    return render_template("reg.html",status=status)
+
+
+@app.route("/logout")
+def logout():
+	session.clear()
+	flash('You are now logged out','success')
+	return redirect(url_for('login'))
 
 
 @app.route("/")
@@ -43,6 +103,7 @@ def index():
 
 
 @app.route("/add_user",methods=['POST','GET'])
+@is_logged_in
 def add_user():
 
     if request.method=='POST':
@@ -74,6 +135,7 @@ def add_user():
 
 
 @app.route("/edit_user/<string:uid>",methods=['POST','GET'])
+@is_logged_in
 def edit_user(uid):
 
     if request.method=='POST':
@@ -120,6 +182,7 @@ def edit_user(uid):
 
 
 @app.route("/delete_user/<string:uid>",methods=['GET'])
+@is_logged_in
 def delete_user(uid):
     con=sql.connect("mysite/db_web.db")
 
@@ -134,6 +197,7 @@ def delete_user(uid):
 
     flash('Currency Deleted','warning')
     return redirect(url_for("index"))
+
 
 if __name__=='__main__':
     app.run(debug=True)

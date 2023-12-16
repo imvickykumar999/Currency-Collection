@@ -2,9 +2,7 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-  <a target="_blank" href="https://photos.app.goo.gl/QbdPwKmfdG5onDyS7">
-    <h3 class='text-center text-muted mb-3'>Currency Collection</h3>
-  </a>
+  <h3 class='jumbotron'>Welcome {{session.username}}</h3>
   <p class='text-right'><a href='{{url_for("add_user")}}' class='btn btn-success'>+ Add Currency</a></p>
 
   <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for Country ...">
