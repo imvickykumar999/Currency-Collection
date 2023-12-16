@@ -79,27 +79,31 @@ def edit_user(uid):
         uname=request.form['uname']
         contact=request.form['contact']
 
+        con=sql.connect("db_web.db")
+        cur=con.cursor()
+
         if 'file' not in request.files:
             flash('No file part','danger')
             
         file = request.files['file']
         if file.filename == '':
             flash('No file selected','danger')
+
+            cur.execute("update users set UNAME=?,CONTACT=? where UID=?",(uname,contact,uid))
+            con.commit()
+
+        else:
+            if file and allowed_extensions(file.filename):
+                filename, file_extension = os.path.splitext(file.filename)
+                new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
+                file.save(os.path.join(app.root_path, UPLOAD_FOLDER, new_filename))   
             
-        if file and allowed_extensions(file.filename):
-            filename, file_extension = os.path.splitext(file.filename)
-            new_filename = secure_filename(filename+str(random.randint(10000,99999))+"."+file_extension)
-            file.save(os.path.join(app.root_path, UPLOAD_FOLDER, new_filename))   
+            data = cur.execute("select FILE from users where UID=?",(uid,)).fetchall()
+            data = f'./static/files/{data[0][0]}'
+            os.remove(data)
 
-        con=sql.connect("db_web.db")
-        cur=con.cursor()
-
-        data = cur.execute("select FILE from users where UID=?",(uid,)).fetchall()
-        data = f'./static/files/{data[0][0]}'
-        os.remove(data)
-
-        cur.execute("update users set UNAME=?,CONTACT=?,FILE=? where UID=?",(uname,contact,new_filename,uid))
-        con.commit()
+            cur.execute("update users set UNAME=?,CONTACT=?,FILE=? where UID=?",(uname,contact,new_filename,uid))
+            con.commit()
 
         flash('Currency Updated','success')
         return redirect(url_for("index"))
