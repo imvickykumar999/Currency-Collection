@@ -1,5 +1,6 @@
 # _config.yml
-theme: jekyll-theme-hacker
 
+# theme: jekyll-theme-hacker
 # theme: jekyll-theme-cayman
-# theme: jekyll-theme-slate
+
+theme: jekyll-theme-slate
