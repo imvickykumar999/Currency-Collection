@@ -2,9 +2,15 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-  <h3 class='jumbotron'>Welcome {{session.username}}</h3>
-  <p class='text-right'><a href='{{url_for("add_user")}}' class='btn btn-success'>+ Add Currency</a></p>
+  <center>
+    {% if session.username %}
+      <h3 class='jumbotron'>Welcome {{session.username}}</h3>
+    {% else %}
+      <h3 class='jumbotron'>Vick's Coin Collection</h3>
+    {% endif %}
+  </center>
 
+  <p class='text-right'><a href='{{url_for("add_user")}}' class='btn btn-success'>+ Add Currency</a></p>
   <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for Country ...">
   <table id="myTable" class='table table-bordered'>
   
