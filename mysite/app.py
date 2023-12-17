@@ -11,10 +11,10 @@ from functools import wraps
 import os, random, secrets
 import sqlite3 as sql
 
-try: os.mkdir('static')
+try: os.mkdir('mysite/static')
 except: pass
 
-try: os.mkdir('static/files')
+try: os.mkdir('mysite/static/files')
 except: pass
 
 app=Flask(__name__)
@@ -23,7 +23,7 @@ app.config['SECRET_KEY'] = secret_key
 
 
 UPLOAD_FOLDER ="static/files"
-FILE_EXTENSIONS = {'html', 'htm'}
+FILE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -66,20 +66,23 @@ def is_logged_in(f):
 
 @app.route('/reg',methods=['POST','GET'])
 def reg():
-    status=False
-    con=sql.connect("mysite/db_sample.db")
+    error = 'Only ADMIN can make CRUD Operation.'
+    return render_template('404.html', error=error), 404
 
-    if request.method=='POST':
-        name=request.form["uname"]
-        email=request.form["email"]
-        pwd=request.form["upass"]
-        cur=con.cursor()
-        cur.execute("insert into users(UNAME,UPASS,EMAIL) values(?,?,?)",(name,pwd,email))
-        con.commit()
-        cur.close()
-        flash('Registration Successfully. Login Here...','success')
-        return redirect('login')
-    return render_template("reg.html",status=status)
+    # status=False
+    # con=sql.connect("mysite/db_sample.db")
+
+    # if request.method=='POST':
+    #     name=request.form["uname"]
+    #     email=request.form["email"]
+    #     pwd=request.form["upass"]
+    #     cur=con.cursor()
+    #     cur.execute("insert into users(UNAME,UPASS,EMAIL) values(?,?,?)",(name,pwd,email))
+    #     con.commit()
+    #     cur.close()
+    #     flash('Registration Successfully. Login Here...','success')
+    #     return redirect('login')
+    # return render_template("reg.html",status=status)
 
 
 @app.route("/logout")
@@ -197,6 +200,12 @@ def delete_user(uid):
 
     flash('Currency Deleted','warning')
     return redirect(url_for("index"))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    error = 'Error 404, Page Not Found.'
+    return render_template('404.html', error=error), 404
 
 
 if __name__=='__main__':
