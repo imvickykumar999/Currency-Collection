@@ -1,4 +1,4 @@
-># [`Currency Collection`](https://imvickykumar999.github.io/Currency-Collection/)
+># `Currency Collection`
 >
 >     >>> python mysite/app.py
 >
